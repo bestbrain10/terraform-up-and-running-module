@@ -11,16 +11,6 @@ data "aws_subnet_ids" "default" {
     vpc_id = data.aws_vpc.default.id
 }
 
-data "terraform_remote_state" "db" {
-    backend = "s3"
-
-    config = {
-        bucket = var.db_remote_state_bucket
-        key = var.db_remote_state_key
-        region = "eu-central-1"
-    }
-}
-
 locals {
     http_port = 80
     any_port = 0
@@ -52,8 +42,6 @@ data "template_file" "user_data" {
 
     vars = {
         server_port = local.http_port
-        db_address = data.terraform_remote_state.db.outputs.db_address
-        db_port = data.terraform_remote_state.db.outputs.db_port
     }
 }
 
